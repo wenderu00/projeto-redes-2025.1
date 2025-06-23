@@ -2,6 +2,8 @@ import socket
 import threading
 import datetime
 import os
+from Fragmentation import Fragmentation
+from datetime import datetime
 
 SERVER_IP = "127.0.0.1"
 SERVER_PORT = 12345
@@ -9,8 +11,14 @@ BUFFER_SIZE = 1024
 
 clients = {}
 
+def write_message(message):
+    path_name = f"server_{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.txt"
+    with open(path_name, "w", encoding="utf-8") as file:
+        file.write(message)
+    return path_name
+
 def format_message(message, client_address, clients):
-    timestamp = datetime.datetime.now().strftime("%H:%M:%S %d/%m/%Y")
+    timestamp = datetime.now().strftime("%H:%M:%S %d/%m/%Y")
     return f"{client_address[0]}:{client_address[1]}/~{clients[client_address]}: {message} {timestamp}"
 
 def is_connect_command(message): 
@@ -31,7 +39,14 @@ def create_server(ip, port):
     return server_socket
 
 def send_message(message, server_socket, client_address):
-    server_socket.sendto(message.encode(), client_address)
+    path = write_message(message)
+    try:
+        fragments = Fragmentation(path)
+        [server_socket.sendto(fragment, client_address) for fragment in fragments]
+    except Exception as e:
+        print(f"Erro ao enviar mensagem: {e}")
+    finally:
+        os.remove(path)
 
 def new_user_connection_message(new_user):
     return f"<{new_user}> foi conectado a sala"
@@ -68,6 +83,14 @@ def start_server():
     while True:
         data, client_address = server_socket.recvfrom(BUFFER_SIZE)
         message = data.decode()
+        message_info = message.split("|")
+        message_content = message_info[4]
+        while message_info[3] == "0":
+            data, client_address = server_socket.recvfrom(BUFFER_SIZE)
+            message = data.decode()
+            message_info = message.split("|")
+            message_content += message_info[4]
+        message = message_content
         if not is_client_in_room(client_address, clients) and is_connect_command(message):
             print(f"Conexão recebida de {client_address}")
             username = catch_username(message)
