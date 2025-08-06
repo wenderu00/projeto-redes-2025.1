@@ -29,7 +29,7 @@ def format_message(message, client_address, clients):
 
 # Verifica se a mensagem é comando de conexão
 def is_connect_command(message): 
-    return message[0:len("hi, meu nome eh <")] == "hi, meu nome eh <" and message[len(message)-1] == ">"
+    return message[0:len("hi, meu nome eh ")] == "hi, meu nome eh "
 
 # Verifica se a mensagem é comando de saída
 def is_exit_command(message):
@@ -41,7 +41,7 @@ def is_client_in_room(client_address, room_clients):
 
 # Extrai o nome de usuário do comando de conexão
 def catch_username(message):
-    return message[len("hi, meu nome eh <"):len(message)-1] 
+    return message[len("hi, meu nome eh "):len(message)] 
 
 # Cria o socket UDP do servidor
 def create_server(ip, port):
