@@ -92,8 +92,14 @@ def start_server():
     while True:
         # 1. Recebe pacote UDP do cliente
         data, client_address = server_socket.recvfrom(BUFFER_SIZE)
-        print(f"[RECEBIDO] Pacote recebido de {client_address} ({len(data)} bytes)")
         data_str = data.decode(errors='ignore')
+        
+        # Ignora pacotes de ACK recebidos do cliente
+        if data_str.startswith('ACK|'):
+            print(f"[INFO] ACK recebido de {client_address}, ignorando.")
+            continue
+
+        print(f"[RECEBIDO] Pacote recebido de {client_address} ({len(data)} bytes)")
         split_idx = data_str.find('|')
         if split_idx == -1:
             print('[ERRO] Pacote mal formatado (sem checksum).')
@@ -101,16 +107,16 @@ def start_server():
             continue
         received_checksum = int(data_str[:split_idx])
         rest = data[split_idx+1:]
-        # 2. Procura o fim do cabeçalho (quinto '|')
+        # 2. Procura o fim do cabeçalho (quarto '|')
         header_end = 0
         pipe_count = 0
         for i, b in enumerate(rest):
             if b == ord('|'):
                 pipe_count += 1
-                if pipe_count == 5:
+                if pipe_count == 4:
                     header_end = i + 1
                     break
-        if pipe_count < 5:
+        if pipe_count < 4:
             print('[ERRO] Cabeçalho incompleto.')
             # Tenta extrair ID e reenviar último ACK, se possível
             try:
@@ -143,7 +149,7 @@ def start_server():
         print('[OK] Checksum válido!')
         # 3. Decodifica o pacote e extrai informações do cabeçalho
         message = (header_bytes + chunk).decode(errors='ignore')
-        message_info = message.split("|")
+        message_info = message.split("|", 4)
         message_content = message_info[4]
         arquivo_id = message_info[0]
         num_pacote = message_info[1]
@@ -171,10 +177,10 @@ def start_server():
             for i, b in enumerate(rest):
                 if b == ord('|'):
                     pipe_count += 1
-                    if pipe_count == 5:
+                    if pipe_count == 4:
                         header_end = i + 1
                         break
-            if pipe_count < 5:
+            if pipe_count < 4:
                 print('[ERRO] Cabeçalho incompleto.')
                 try:
                     header_str = rest[:].decode(errors='ignore')
@@ -204,7 +210,7 @@ def start_server():
                 continue
             print('[OK] Checksum válido!')
             message = (header_bytes + chunk).decode(errors='ignore')
-            message_info = message.split("|")
+            message_info = message.split("|", 4)
             message_content += message_info[4]
             arquivo_id = message_info[0]
             num_pacote = message_info[1]
