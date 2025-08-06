@@ -47,10 +47,10 @@ def receive_message(client_socket):
                         print("[AVISO] Checksum de ACK inválido. Pacote ignorado.")
                 continue
 
-            print(f"[RECEBIDO] Pacote recebido de {sender_addr} ({len(data)} bytes)")
+            #print(f"[RECEBIDO] Pacote recebido de {sender_addr} ({len(data)} bytes)")
             split_idx = data_str.find('|')
             if split_idx == -1:
-                print('[ERRO] Pacote de dados mal formatado (sem checksum).')
+                #print('[ERRO] Pacote de dados mal formatado (sem checksum).')
                 continue
             
             received_checksum = int(data_str[:split_idx])
@@ -65,19 +65,19 @@ def receive_message(client_socket):
                         break
             
             if pipe_count < 4:
-                print('[ERRO] Cabeçalho do pacote de dados incompleto.')
+                #print('[ERRO] Cabeçalho do pacote de dados incompleto.')
                 continue
 
             header_bytes = rest[:header_end]
             chunk = rest[header_end:]
-            print('[PROCESSO] Verificando integridade do pacote (checksum)...')
+            #print('[PROCESSO] Verificando integridade do pacote (checksum)...')
             calc_checksum = zlib.crc32(header_bytes + chunk)
 
             if calc_checksum != received_checksum:
-                print('[ERRO] Pacote corrompido (checksum inválido).')
+                #print('[ERRO] Pacote corrompido (checksum inválido).')
                 continue
 
-            print('[OK] Checksum válido!')
+            #print('[OK] Checksum válido!')
             message = (header_bytes + chunk).decode(errors='ignore')
             message_info = message.split("|", 4)
             message_content = message_info[4]
@@ -87,12 +87,12 @@ def receive_message(client_socket):
             ack_str = f"ACK|{arquivo_id}|{num_pacote}"
             ack_checksum = zlib.crc32(ack_str.encode('utf-8'))
             ack_packet = f"{ack_str}|{ack_checksum}".encode('utf-8')
-            print(f"[ENVIO] Enviando ACK para {sender_addr} (ID={arquivo_id}, SEQ={num_pacote})")
+            #print(f"[ENVIO] Enviando ACK para {sender_addr} (ID={arquivo_id}, SEQ={num_pacote})")
             client_socket.sendto(ack_packet, sender_addr)
             last_ack_sent[arquivo_id] = ack_packet
 
             while message_info[3] == "0":
-                print('[PROCESSO] Aguardando próximo fragmento para montagem da mensagem completa...')
+                #print('[PROCESSO] Aguardando próximo fragmento para montagem da mensagem completa...')
                 data, sender_addr = client_socket.recvfrom(BUFFER_SIZE)
                 data_str = data.decode(errors='ignore')
                 
@@ -120,10 +120,10 @@ def receive_message(client_socket):
                 calc_checksum = zlib.crc32(header_bytes + chunk)
 
                 if calc_checksum != received_checksum:
-                    print('[ERRO] Fragmento corrompido.')
+                    #print('[ERRO] Fragmento corrompido.')
                     continue
                 
-                print('[OK] Fragmento válido!')
+                #print('[OK] Fragmento válido!')
                 message = (header_bytes + chunk).decode(errors='ignore')
                 message_info = message.split("|", 4)
                 message_content += message_info[4]
