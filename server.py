@@ -1,5 +1,4 @@
 import socket
-import threading
 import datetime
 import os
 from Fragmentation import Fragmentation
@@ -22,7 +21,7 @@ def format_message(message, client_address, clients):
     return f"{client_address[0]}:{client_address[1]}/~{clients[client_address]}: {message} {timestamp}"
 
 def is_connect_command(message): 
-    return message[0:len("hi, meu nome eh <")] == "hi, meu nome eh <" and message[len(message)-1] == ">"
+    return message[0:len("hi, meu nome eh ")] == "hi, meu nome eh "
 
 def is_exit_command(message):
     return message == "bye"
@@ -31,7 +30,7 @@ def is_client_in_room(client_address, room_clients):
     return client_address in room_clients
 
 def catch_username(message):
-    return message[len("hi, meu nome eh <"):len(message)-1] 
+    return message[len("hi, meu nome eh "):len(message)] 
 
 def create_server(ip, port):
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
