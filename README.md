@@ -1,7 +1,7 @@
 # projeto-redes-2025.1
 # Implementação do Protocolo de Transferência de Dados Confiável (RDT 3.0)
 
-##Integrantes
+## Integrantes
 * Eduardo Teles
 * Lucas
 * Márcio Wendell
