@@ -3,7 +3,7 @@
 
 ## Integrantes
 * Eduardo Teles
-* Lucas
+* Lucas Angeli Occenstein
 * Márcio Wendell
 
 O projeto implementa um serviço de chat sobre UDP, garantindo a entrega confiável de mensagens através da aplicação dos mecanismos do protocolo RDT 3.0. A seguir, detalham-se os componentes técnicos da solução.
