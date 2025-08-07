@@ -80,9 +80,9 @@ Essa arquitetura garante que as mensagens sejam entregues de forma íntegra, ord
 
 * **Conexão**: Para se conectar ao chat, envie a mensagem:
     ```
-    hi, meu nome eh <NOME>
+    hi, meu nome eh NOME
     ```
-    Substitua `<NOME>` pelo seu nome de usuário.
+    Substitua `NOME` pelo seu nome de usuário.
 * **Desconexão**: Para sair do chat, envie a mensagem:
     ```
     bye
