@@ -1,6 +1,11 @@
 # projeto-redes-2025.1
 # Implementação do Protocolo de Transferência de Dados Confiável (RDT 3.0)
 
+##Integrantes
+* Eduardo Teles
+* Lucas
+* Márcio Wendell
+
 O projeto implementa um serviço de chat sobre UDP, garantindo a entrega confiável de mensagens através da aplicação dos mecanismos do protocolo RDT 3.0. A seguir, detalham-se os componentes técnicos da solução.
 
 ## 1. Estrutura do Pacote e Cabeçalho
